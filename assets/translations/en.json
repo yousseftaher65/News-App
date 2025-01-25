@@ -5,9 +5,11 @@
     "welcome" : "Good Morning\nHere is Some News For You",
     "news" : "News",
     "language" : "Language",
-    "dark_mode" : "Dark Mode",
-    "light_mode" : "Light Mode",
+    "dark" : "Dark Mode",
+    "light" : "Light Mode",
     "theme" : "Theme",
     "english" : "English",
-    "arabic" : "Arabic"
+    "arabic" : "Arabic",
+    "news_app"  : "News App",
+    "view_all" : "View All"
 }
