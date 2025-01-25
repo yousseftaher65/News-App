@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:news_pojo/core/theme/base_theme.dart';
 import 'package:news_pojo/core/theme/color_palette.dart';
 
@@ -18,6 +19,8 @@ class LightTheme extends BaseTheme {
   @override
   ThemeData get themeData => ThemeData(
     primaryColor: primaryColor,
+    secondaryHeaderColor: secondaryColor,
+    indicatorColor: accentColor,
     scaffoldBackgroundColor: primaryColor,
     appBarTheme: AppBarTheme(
       centerTitle: true,
@@ -37,6 +40,55 @@ class LightTheme extends BaseTheme {
       bodyLarge: contentTxt.copyWith(color: secondaryColor),
       bodyMedium: subContentTxt.copyWith(color: accentColor),
     ),
+    dropdownMenuTheme: DropdownMenuThemeData(
+          inputDecorationTheme: InputDecorationTheme(
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            //labelStyle: TextStyle(color: primaryColor),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(24.r),
+              borderSide: BorderSide(
+                color: primaryColor,
+                width: 2,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(24.r),
+              borderSide: BorderSide(
+                color: primaryColor,
+                width: 2,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(24.r),
+              borderSide: BorderSide(
+                color: primaryColor,
+                width: 2,
+              ),
+            ),
+          ),
+          menuStyle: MenuStyle(
+            elevation: WidgetStatePropertyAll(2),
+            padding: WidgetStatePropertyAll(
+              EdgeInsets.only(
+                left: 16,
+                right: 16,
+              ),
+            ),
+            surfaceTintColor: WidgetStatePropertyAll(secondaryColor),
+            backgroundColor: WidgetStatePropertyAll(secondaryColor),
+          ),
+          textStyle:
+          supTitleTxt.copyWith(color: primaryColor)
+        ),
+        menuButtonTheme: MenuButtonThemeData(
+          style: ButtonStyle(
+            textStyle: WidgetStatePropertyAll(
+              supTitleTxt.copyWith(color: primaryColor)
+            ),
+            foregroundColor: WidgetStatePropertyAll(primaryColor),
+          ),
+        ),
   );
 
 }
