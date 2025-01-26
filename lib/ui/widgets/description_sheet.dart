@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -29,28 +30,22 @@ class DescriptionSheet extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8.r),
-                  child: Image.network(
-                    image != null && image!.isNotEmpty
+                  child: CachedNetworkImage(
+                    imageUrl: image != null && image!.isNotEmpty
                         ? image!
                         : Assets.images.dark.generalDark.path,
                     height: 220,
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
-                        Assets.images.dark.generalDark.path,
-                        height: 220,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      );
-                    },
+                    placeholder: (context, url) => CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
                 ),
                 SizedBox(height: 8.h),
                 Text(
                   description ?? '',
                   overflow: TextOverflow.ellipsis,
-                  maxLines: 3,
+                  maxLines: 5 ,
                   style: Theme.of(context).textTheme.titleMedium!.copyWith(
                     color: Theme.of(context).primaryColor,
                   ),

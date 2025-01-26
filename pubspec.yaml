@@ -21,6 +21,7 @@ dependencies:
   hive_flutter :
   url_launcher :
   json_annotation:
+  cached_network_image: 3.4.1
 
 flutter_gen:
   output: lib/core/resources/

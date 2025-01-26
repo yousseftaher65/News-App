@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:news_pojo/core/resources/assets.gen.dart';
@@ -30,21 +31,15 @@ class ArticalItem extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(8.r),
-              child: Image.network(
-                image != null && image!.isNotEmpty
+              child: CachedNetworkImage(
+                imageUrl: image != null && image!.isNotEmpty
                     ? image!
                     : Assets.images.dark.generalDark.path,
                 height: 220,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Image.asset(
-                    Assets.images.dark.generalDark.path,
-                    height: 220,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  );
-                },
+                placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => Icon(Icons.error),
               ),
             ),
             SizedBox(height: 8.h),
