@@ -23,5 +23,6 @@
     "entertainment": "ترفيه",
     "search_news": "بحث عن الأخبار",
     "search_hint": "ابحث عن أخبار",
-    "search_no_result": "لم يتم العثور على نتائج"
+    "search_no_result": "لم يتم العثور على نتائج",
+    "view_full" : "عرض المقالة الكاملة"
 }

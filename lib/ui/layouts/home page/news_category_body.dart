@@ -19,7 +19,7 @@ class _NewsCategoryBodyState extends State<NewsCategoryBody> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder<SourcesResponse>(
-          future: ApiManager.getSources(),
+          future: ApiManager.getSources(widget.categoryName),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
@@ -30,7 +30,7 @@ class _NewsCategoryBodyState extends State<NewsCategoryBody> {
                 return Center(
                   child: Text('Failed to load sources', style: TextStyle(color: Colors.red),),
                 );
-              } else if (snapshot.hasData) {
+              } else if (snapshot.hasData && snapshot.data != null) {
                 var data = snapshot.data!.sources;
                 return DefaultTabController(
                   length: data?.length ?? 0,
