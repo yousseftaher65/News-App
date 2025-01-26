@@ -11,5 +11,17 @@
     "english" : "English",
     "arabic" : "Arabic",
     "news_app"  : "News App",
-    "view_all" : "View All"
+    "view_all" : "View All",
+    "no_news" : "No News Found",
+    "no_internet" : "No Internet Connection",
+    "general" : "General",
+    "business" : "Business",
+    "technology" : "Technology",
+    "science" : "Science",
+    "sports" : "Sports",
+    "health" : "Health",
+    "entertainment" : "Entertainment",
+    "search_news" : "Search News",
+    "search_hint" : "Search for news",
+    "search_no_result" : "No Result Found"
 }

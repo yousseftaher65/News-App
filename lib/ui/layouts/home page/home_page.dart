@@ -23,7 +23,7 @@ class _HomePageState extends State<HomePage> {
       key: _scaffoldKey,
       drawer: DrawerWidget(onBack: onBack,),
       appBar: AppBar(
-        title: Text("home".tr()),
+        title: Text(categoryName == null ? "home".tr() : categoryName!.tr()),
         actions: [
           IconButton(
             icon: Icon(
