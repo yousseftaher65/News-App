@@ -31,7 +31,7 @@ class Articles {
   String? content;
 
   Articles(
-      {this.source,
+      { this.source,
       this.author,
       this.title,
       this.description,

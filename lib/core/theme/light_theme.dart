@@ -89,6 +89,22 @@ class LightTheme extends BaseTheme {
             foregroundColor: WidgetStatePropertyAll(primaryColor),
           ),
         ),
+        searchBarTheme: SearchBarThemeData(
+          elevation: WidgetStatePropertyAll(0),
+          backgroundColor: WidgetStatePropertyAll(primaryColor),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              side: BorderSide(color: secondaryColor, width: 2),
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+          padding: WidgetStatePropertyAll(
+            EdgeInsets.symmetric(horizontal: 16),
+          ),
+          hintStyle: WidgetStatePropertyAll(
+            TextStyle(color: secondaryColor),
+          ),
+        ),
   );
 
 }

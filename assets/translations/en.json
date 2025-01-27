@@ -24,5 +24,6 @@
     "search_news" : "Search News",
     "search_hint" : "Search for news",
     "search_no_result" : "No Result Found",
-    "view_full" : "View Full Article"
+    "view_full" : "View Full Article",
+    "failed" :"Failed To Load Articles"
 }
