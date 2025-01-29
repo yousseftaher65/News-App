@@ -83,6 +83,24 @@ class DarkTheme extends BaseTheme {
             foregroundColor: WidgetStatePropertyAll(secondaryColor),
           ),
         ),
+        inputDecorationTheme: InputDecorationTheme(
+          hintStyle: TextStyle(color: secondaryColor),
+          filled: true,
+          fillColor: primaryColor,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.r),
+            borderSide: BorderSide(color: secondaryColor, width: 2.w),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.r),
+            borderSide: BorderSide(color: secondaryColor, width: 2.w),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.r),
+            borderSide: BorderSide(color: secondaryColor, width: 2.w),
+          ),
+          contentPadding: EdgeInsets.symmetric(vertical: 16.h),
+        ),
   );
   
 }

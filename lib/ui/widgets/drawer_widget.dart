@@ -29,6 +29,7 @@ class DrawerWidget extends StatelessWidget {
                   ),
             ),
           ),
+          SizedBox(height: 24.h),
           ListTile(
             title: Text(
               'home'.tr(),
@@ -41,12 +42,12 @@ class DrawerWidget extends StatelessWidget {
               onBack();
             },
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 24.h),
           Divider(
             color: ColorPalette.primaryLightColor,
             height: 2,
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 24.h),
           FractionallySizedBox(
             widthFactor: 0.9,
             child: Row(
@@ -100,12 +101,12 @@ class DrawerWidget extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 24.h),
           Divider(
             color: ColorPalette.primaryLightColor,
             height: 2,
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 24.h),
           FractionallySizedBox(
             widthFactor: 0.9,
             child: Row(
@@ -163,7 +164,7 @@ class DrawerWidget extends StatelessWidget {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
