@@ -83,21 +83,23 @@ class DarkTheme extends BaseTheme {
             foregroundColor: WidgetStatePropertyAll(secondaryColor),
           ),
         ),
-        searchBarTheme: SearchBarThemeData(
-          elevation: WidgetStatePropertyAll(0),
-          backgroundColor: WidgetStatePropertyAll(primaryColor),
-          shape: WidgetStatePropertyAll(
-            RoundedRectangleBorder(
-              side: BorderSide(color: secondaryColor, width: 2),
-              borderRadius: BorderRadius.circular(16),
-            ),
+        inputDecorationTheme: InputDecorationTheme(
+          hintStyle: TextStyle(color: secondaryColor),
+          filled: true,
+          fillColor: primaryColor,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.r),
+            borderSide: BorderSide(color: secondaryColor, width: 2.w),
           ),
-          padding: WidgetStatePropertyAll(
-            EdgeInsets.symmetric(horizontal: 16),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.r),
+            borderSide: BorderSide(color: secondaryColor, width: 2.w),
           ),
-          hintStyle: WidgetStatePropertyAll(
-            TextStyle(color: secondaryColor),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.r),
+            borderSide: BorderSide(color: secondaryColor, width: 2.w),
           ),
+          contentPadding: EdgeInsets.symmetric(vertical: 16.h),
         ),
   );
   

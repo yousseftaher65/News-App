@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:news_pojo/core/routes/pages_route_name.dart';
@@ -18,30 +20,33 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      drawer: DrawerWidget(
-        onBack: onBack,
-      ),
-      appBar: AppBar(
-        title: Text(categoryName == null ? "home".tr() : categoryName!.tr()),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.search,
-              size: 24,
+    return WillPopScope(
+      onWillPop: () => _onWillPop(),
+      child: Scaffold(
+        key: _scaffoldKey,
+        drawer: DrawerWidget(
+          onBack: onBack,
+        ),
+        appBar: AppBar(
+          title: Text(categoryName == null ? "home".tr() : categoryName!.tr()),
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.search,
+                size: 24,
+              ),
+              onPressed: () {
+                Navigator.pushNamed(context, PagesRouteName.search);
+              },
             ),
-            onPressed: () {
-              Navigator.pushNamed(context, PagesRouteName.search);
-            },
-          ),
-        ],
+          ],
+        ),
+        body: categoryName == null
+            ? HomeCategoryBody(
+                onTapCategory: onTapCategory,
+              )
+            : NewsCategoryBody(categoryName: categoryName!),
       ),
-      body: categoryName == null
-          ? HomeCategoryBody(
-              onTapCategory: onTapCategory,
-            )
-          : NewsCategoryBody(categoryName: categoryName!),
     );
   }
 
@@ -56,5 +61,14 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       categoryName = null;
     });
+  }
+  Future<bool> _onWillPop() async {
+    if (categoryName != null) {
+      setState(() {
+        categoryName = null;
+      });
+      return false; // Prevents the default back navigation
+    }
+    return true; // Allows the default back navigation
   }
 }
