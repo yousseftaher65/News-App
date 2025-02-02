@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:news_pojo/core/providers/theme_provider.dart';
 import 'package:news_pojo/core/resources/assets.gen.dart';
 import 'package:news_pojo/ui/widgets/category_item.dart';
+import 'package:provider/provider.dart';
 
 class HomeCategoryBody extends StatelessWidget {
 
@@ -12,6 +14,7 @@ class HomeCategoryBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var provider = Provider.of<ThemeProvider>(context);
     return Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -29,9 +32,9 @@ class HomeCategoryBody extends StatelessWidget {
                 separatorBuilder: (context, index) => SizedBox(
                   height: 16.h,
                 ),
-                itemCount: imageList.length,
+                itemCount: provider.themeMode == ThemeMode.light ? imageListLightMode.length : imageListDarkMode.length,
                 itemBuilder: (context, index) {
-                  return CategoryItem(image: imageList[index] , isleft: index.isEven , onTap: onTapCategory , selectedCategory: categoryList[index]);
+                  return CategoryItem(image: provider.themeMode == ThemeMode.light ? imageListLightMode[index] : imageListDarkMode[index] , isleft: index.isEven , onTap: onTapCategory , selectedCategory: categoryList[index]);
                 },
               ),
             )
@@ -40,7 +43,7 @@ class HomeCategoryBody extends StatelessWidget {
       );
   }
 
-  final List<String> imageList = [
+  final List<String> imageListLightMode = [
     Assets.images.dark.generalDark.path,
     Assets.images.dark.businessDark.path,
     Assets.images.dark.entertainmentDark.path,
@@ -49,6 +52,17 @@ class HomeCategoryBody extends StatelessWidget {
     Assets.images.dark.healthDark.path,
     Assets.images.dark.sportsDark.path,
   ];
+  final List<String> imageListDarkMode = [
+    Assets.images.light.generalLight.path,
+    Assets.images.light.businessLight.path,
+    Assets.images.light.entertainmentLight.path,
+    Assets.images.light.technologyLight.path,
+    Assets.images.light.scienceLight.path,
+    Assets.images.light.healthLight.path,
+    Assets.images.light.sportsLight.path,
+  ];
+
+
 
   final List<String> categoryList = [
     'general',

@@ -1,15 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:news_pojo/core/providers/theme_provider.dart';
 import 'package:news_pojo/core/resources/assets.gen.dart';
 import 'package:news_pojo/core/theme/color_palette.dart';
+import 'package:provider/provider.dart';
 
 class DrawerWidget extends StatelessWidget {
   final Function onBack;
-  const DrawerWidget({super.key , required this.onBack});
+  const DrawerWidget({super.key, required this.onBack});
 
   @override
   Widget build(BuildContext context) {
+    var provider = Provider.of<ThemeProvider>(context);
     return Drawer(
       backgroundColor: ColorPalette.primaryDarkColor,
       shape: LinearBorder(),
@@ -25,11 +28,11 @@ class DrawerWidget extends StatelessWidget {
             child: Text(
               'news_app'.tr(),
               style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
+                  fontWeight: FontWeight.w700,
+                  color: ColorPalette.primaryDarkColor),
             ),
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: 16.h),
           ListTile(
             title: Text(
               'home'.tr(),
@@ -42,7 +45,7 @@ class DrawerWidget extends StatelessWidget {
               onBack();
             },
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: 16.h),
           Divider(
             color: ColorPalette.primaryLightColor,
             height: 2,
@@ -63,30 +66,30 @@ class DrawerWidget extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 16.h),
           FractionallySizedBox(
             widthFactor: 0.9,
             child: DropdownMenu(
               controller: TextEditingController(
-                  text: //provider.themeMode == ThemeMode.light
-                      /* ? "light".tr()
-                      : */
-                      "dark".tr()),
+                  text: provider.themeMode == ThemeMode.light
+                      ? "light".tr()
+                      : "dark".tr()),
               width: double.infinity,
               trailingIcon: Icon(
                 Icons.arrow_drop_down_rounded,
-                color: Theme.of(context).primaryColor,
+                color: ColorPalette.primaryLightColor,
                 size: 50,
               ),
               selectedTrailingIcon: Icon(
-                Icons.arrow_drop_down_rounded,
-                color: Theme.of(context).primaryColor,
+                Icons.arrow_drop_up_rounded,
+                color: ColorPalette.primaryLightColor,
                 size: 50,
               ),
               enableSearch: false,
               onSelected: (ThemeMode? value) {
                 if (value != null) {
-                  // provider.changeTheme(value);
+                  provider.changeTheme();
+                  Navigator.pop(context);
                 }
               },
               dropdownMenuEntries: [
@@ -122,7 +125,7 @@ class DrawerWidget extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 16.h),
           FractionallySizedBox(
             widthFactor: 0.9,
             child: DropdownMenu(
@@ -133,12 +136,12 @@ class DrawerWidget extends StatelessWidget {
               width: double.infinity,
               trailingIcon: Icon(
                 Icons.arrow_drop_down_rounded,
-                color: Theme.of(context).primaryColor,
+                color: ColorPalette.primaryLightColor,
                 size: 50,
               ),
               selectedTrailingIcon: Icon(
-                Icons.arrow_drop_down_rounded,
-                color: Theme.of(context).primaryColor,
+                Icons.arrow_drop_up_rounded,
+                color: ColorPalette.primaryLightColor,
                 size: 50,
               ),
               enableSearch: false,
@@ -152,6 +155,7 @@ class DrawerWidget extends StatelessWidget {
                     Locale('en'),
                   );
                 }
+              Navigator.pop(context);
               },
               dropdownMenuEntries: [
                 DropdownMenuEntry(
