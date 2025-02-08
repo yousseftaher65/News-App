@@ -1,64 +1,62 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:news_pojo/core/constants/api_manager.dart';
-import 'package:news_pojo/models/sources_response.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:news_pojo/bloc/cubit.dart';
+import 'package:news_pojo/bloc/states.dart';
 import 'package:news_pojo/ui/widgets/articals_fragment.dart';
 
-class NewsCategoryBody extends StatefulWidget {
+class NewsCategoryBody extends StatelessWidget {
   final String categoryName;
 
   const NewsCategoryBody({super.key, required this.categoryName});
 
   @override
-  State<NewsCategoryBody> createState() => _NewsCategoryBodyState();
-}
-
-class _NewsCategoryBodyState extends State<NewsCategoryBody> {
-  int selectedTabIndex = 0;
-
-  @override
   Widget build(BuildContext context) {
+    //var data = snapshot.data!.sources;
     return Scaffold(
-      body: FutureBuilder<SourcesResponse>(
-          future: ApiManager.getSources(widget.categoryName),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
+      body: BlocProvider(
+        create: (context) => HomeCubit()..getSources(categoryName),
+        child: BlocConsumer<HomeCubit, HomeStates>(
+          listener: (context, state) {},
+          builder: (context, state) {
+            var bloc = BlocProvider.of<HomeCubit>(context);
+            var data = bloc.sourcesResponse?.sources;
+            if (state is GetSourcesLoadingState) {
+              return Center(child: CircularProgressIndicator());
+            } else if (state is GetSourcesErrorState ||
+                state is GetArticalsErrorState) {
               return Center(
-                child: CircularProgressIndicator(),
+                child: Text(
+                  'failed'.tr(),
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
               );
-            } else if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text('Failed to load sources', style: TextStyle(color: Colors.red),),
-                );
-              } else if (snapshot.hasData && snapshot.data != null) {
-                var data = snapshot.data!.sources;
-                return DefaultTabController(
-                  length: data?.length ?? 0,
-                  initialIndex: selectedTabIndex,
-                  child: Column(
-                    children: [
-                      TabBar(
-                        dividerColor: Colors.transparent,
-                        indicatorColor: Theme.of(context).secondaryHeaderColor,
-                        labelColor: Theme.of(context).secondaryHeaderColor,
-                        isScrollable: true,
-                        onTap: (index) {
-                          setState(() {
-                            selectedTabIndex = index;
-                          });
-                        },
-                        tabs: data!.map((e) => Tab(text: e.name!)).toList(),
-                      ),
-                      ArticalsFragment(sourceId: data[selectedTabIndex].id!),
-                    ],
-                  ),
-                );
-              }
+            } else {
+              return DefaultTabController(
+                length: data?.length ?? 0,
+                initialIndex: bloc.selectedTabIndex,
+                child: Column(
+                  children: [
+                    TabBar(
+                      dividerColor: Colors.transparent,
+                      indicatorColor: Theme.of(context).secondaryHeaderColor,
+                      labelColor: Theme.of(context).secondaryHeaderColor,
+                      isScrollable: true,
+                      onTap: (index) {
+                        bloc.changeSelectedTab(index);
+                      },
+                      tabs: data?.map((e) => Tab(text: e.name)).toList() ?? [],
+                    ),
+                    ArticalsFragment(
+                        //homeCubit: bloc,
+                        ),
+                  ],
+                ),
+              );
             }
-            return Center(
-              child: Text('No data found', style: TextStyle(color: Colors.red),),
-            );
-          }),
+          },
+        ),
+      ),
     );
   }
 }

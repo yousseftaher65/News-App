@@ -1,6 +1,8 @@
+import 'package:bloc/bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:news_pojo/bloc/bloc_observer.dart';
 import 'package:news_pojo/core/providers/theme_provider.dart';
 import 'package:news_pojo/core/routes/app_routes.dart';
 import 'package:news_pojo/core/theme/base_theme.dart';
@@ -10,6 +12,7 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+   Bloc.observer = MyBlocObserver();
   await EasyLocalization.ensureInitialized();
   runApp(
     ChangeNotifierProvider(

@@ -1,8 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:news_pojo/core/constants/api_manager.dart';
-import 'package:news_pojo/models/news_response.dart';
+import 'package:news_pojo/bloc/cubit.dart';
+import 'package:news_pojo/bloc/states.dart';
 import 'package:news_pojo/ui/widgets/artical_item.dart';
 import 'package:news_pojo/ui/widgets/description_sheet.dart';
 
@@ -14,8 +15,7 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  final SearchController controller = SearchController();
-  String query = '';
+  final TextEditingController controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -25,113 +25,117 @@ class _SearchPageState extends State<SearchPage> {
           body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              TextField(
-                onSubmitted: (value) {
-                  setState(() {
-                    query = value;
-                  });
-                  _performSearch();
-                },
-                controller: controller,
-                decoration: InputDecoration(
-                  suffixIcon: GestureDetector(
-                    onDoubleTap: () => Navigator.pop(context),
-                    child: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          controller.text = '';
-                          query = '';
-                        });
-                      },
-                      icon: Icon(Icons.close,
-                          color: Theme.of(context).secondaryHeaderColor),
-                    ),
-                  ),
-                  prefixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        query = controller.text;
-                      });
-                      _performSearch();
-                    },
-                    icon: Icon(Icons.search,
-                        color: Theme.of(context).secondaryHeaderColor),
-                  ),
-                  hintText: "search".tr(),
-                ),
-              ),
-              SizedBox(height: 8.h),
-              FutureBuilder<NewsResponse>(
-                  future: _performSearch(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else if (snapshot.connectionState ==
-                        ConnectionState.done) {
-                      if (snapshot.hasError) {
-                        return Center(
-                          child: Text("failed".tr()),
-                        );
-                      } else if (snapshot.hasData &&
-                          snapshot.data!.articles!.isNotEmpty) {
-                        return Expanded(
-                          child: ListView.separated(
-                            separatorBuilder: (context, index) =>
-                                SizedBox(height: 8.h),
-                            itemCount: snapshot.data?.articles?.length ?? 0,
-                            itemBuilder: (context, index) {
-                              var data = snapshot.data!.articles![index];
-                              return GestureDetector(
-                                onTap: () async {
-                                  await showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return DescriptionSheet(
-                                          description: data.description,
-                                          image: data.urlToImage);
-                                    },
-                                  );
-                                },
-                                child: ArticalItem(
-                                    image: data.urlToImage,
-                                    title: data.title,
-                                    author: data.author,
-                                    date: data.publishedAt),
-                              );
-                            },
+          child: BlocProvider(
+            create: (context) => HomeCubit()..performSearch(controller.text),
+            child: BlocConsumer<HomeCubit, HomeStates>(
+                listener: (context, state) {},
+                builder: (context, state) {
+                  var bloc = context.read<HomeCubit>();
+                 // var bloc = BlocProvider.of<HomeCubit>(context);
+                  var articles = bloc.newsResponse?.articles ?? [];
+                  return Column(
+                    children: [
+                      TextField(
+                        onSubmitted: (value) {
+                          // Update the cubit's query and call maybePerformSearch
+                          //final cubit = context.read<HomeCubit>();
+                          bloc.query = value;
+                          bloc.maybePerformSearch();
+                        },
+                        controller: controller,
+                        decoration: InputDecoration(
+                          suffixIcon: GestureDetector(
+                            onDoubleTap: () => Navigator.pop(context),
+                            child: IconButton(
+                              onPressed: () {
+                                // Clear the controller and trigger a search (if needed)
+                                controller.clear();
+                               // final cubit = context.read<HomeCubit>();
+                                bloc.query = '';
+                                bloc.maybePerformSearch();
+                              },
+                              icon: Icon(Icons.close,
+                                  color:
+                                      Theme.of(context).secondaryHeaderColor),
+                            ),
                           ),
-                        );
-                      }
-                    }
-                    return Center(
-                      child: Text(
-                        'no_news'.tr(),
-                        style: Theme.of(context).textTheme.titleLarge,
+                          prefixIcon: IconButton(
+                            onPressed: () {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              // Update and call maybePerformSearch when the search icon is tapped
+                              //final cubit = context.read<HomeCubit>();
+                              bloc.query = controller.text;
+                              bloc.maybePerformSearch();
+                            },
+                            icon: Icon(Icons.search,
+                                color: Theme.of(context).secondaryHeaderColor),
+                          ),
+                          hintText: "search".tr(),
+                        ),
                       ),
-                    );
-                  }),
-            ],
+                      SizedBox(height: 8.h),
+                      Expanded(
+                        child: BlocBuilder<HomeCubit, HomeStates>(
+                            builder: (context, state) {
+                          if (state is GetSearchLoadingState ||
+                              state is GetArticalsLoadingState) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else if (state is GetSearchErrorState ||
+                              state is GetArticalsErrorState) {
+                            return Center(
+                              child: Text("failed".tr()),
+                            );
+                          } else if (state is GetSearchSuccessState &&
+                              articles.isNotEmpty) {
+                            return ListView.separated(
+                              separatorBuilder: (context, index) =>
+                                  SizedBox(height: 8.h),
+                              itemCount: articles.length,
+                              itemBuilder: (context, index) {
+                                var data = articles[index];
+                                return GestureDetector(
+                                  onTap: () async {
+                                    await showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return DescriptionSheet(
+                                            description: data.description,
+                                            image: data.urlToImage);
+                                      },
+                                    );
+                                  },
+                                  child: ArticalItem(
+                                      image: data.urlToImage,
+                                      title: data.title,
+                                      author: data.author,
+                                      date: data.publishedAt),
+                                );
+                              },
+                            );
+                          } else{
+                           return Center(
+                              child: Text(
+                                'no_news'.tr(),
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                            );
+                          }
+                        }),
+                      )
+                    ],
+                  );
+                }),
           ),
         ),
       )),
     );
   }
 
-  Future<NewsResponse> _performSearch() async {
-    if (query.isEmpty) {
-      return await ApiManager.getArticles('abc-news');
-    } else {
-      return await ApiManager.getSearch(query);
-    }
-  }
-
   @override
   void dispose() {
-    controller;
+    controller.dispose();
     super.dispose();
   }
 }
