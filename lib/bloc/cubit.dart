@@ -25,19 +25,16 @@ class HomeCubit extends Cubit<HomeStates> {
     emit(ChangeSelectedTab());
   }
 
-  Future <void> performSearch(String search) async {
-   query = search ;
+  Future<void> performSearch(String search) async {
+    query = search;
     if (search.isEmpty) {
       await getArticles();
-      
+
       emit(GetSearchSuccessState());
     } else {
-
       await getSearch();
     }
   }
-
-  
 
   /// Checks if the current text is non-empty and different from the last search.
   void maybePerformSearch() {
@@ -56,10 +53,14 @@ class HomeCubit extends Cubit<HomeStates> {
 
       var jsonData = jsonDecode(response.body);
       sourcesResponse = SourcesResponse.fromJson(jsonData);
-      await getArticles();
-      emit(GetSourcesSuccessState());
+      if (sourcesResponse?.status == 'ok') {
+        await getArticles();
+        emit(GetSourcesSuccessState());
+      } else {
+        emit(GetSourcesErrorState(sourcesResponse?.message ?? ''));
+      }
     } catch (e) {
-      emit(GetSourcesErrorState());
+      emit(GetSourcesErrorState(e.toString()));
     }
   }
 
@@ -74,9 +75,13 @@ class HomeCubit extends Cubit<HomeStates> {
 
       var jsonData = jsonDecode(response.body);
       newsResponse = NewsResponse.fromJson(jsonData);
-      emit(GetArticalsSuccessState());
+      if (newsResponse?.status == 'ok') {
+        emit(GetArticalsSuccessState());
+      } else {
+        emit(GetArticalsErrorState(newsResponse?.message ?? ''));
+      }
     } catch (e) {
-      emit(GetArticalsErrorState());
+      emit(GetArticalsErrorState(e as String));
     }
   }
 
@@ -89,9 +94,13 @@ class HomeCubit extends Cubit<HomeStates> {
 
       var jsonData = jsonDecode(response.body);
       newsResponse = NewsResponse.fromJson(jsonData);
-      emit(GetSearchSuccessState());
+     if(newsResponse?.status == 'ok'){
+       emit(GetSearchSuccessState());
+       }else{
+        emit(GetSearchErrorState(newsResponse?.message??''));
+       }
     } catch (e) {
-      emit(GetSearchErrorState());
+      emit(GetSearchErrorState(e.toString()));
     }
   }
 }

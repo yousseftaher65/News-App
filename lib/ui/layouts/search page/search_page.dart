@@ -22,16 +22,16 @@ class _SearchPageState extends State<SearchPage> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-          body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: BlocProvider(
-            create: (context) => HomeCubit()..performSearch(controller.text),
-            child: BlocConsumer<HomeCubit, HomeStates>(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: BlocProvider(
+              create: (context) => HomeCubit()..performSearch(controller.text),
+              child: BlocConsumer<HomeCubit, HomeStates>(
                 listener: (context, state) {},
                 builder: (context, state) {
                   var bloc = context.read<HomeCubit>();
-                 // var bloc = BlocProvider.of<HomeCubit>(context);
+                  // var bloc = BlocProvider.of<HomeCubit>(context);
                   var articles = bloc.newsResponse?.articles ?? [];
                   return Column(
                     children: [
@@ -50,7 +50,7 @@ class _SearchPageState extends State<SearchPage> {
                               onPressed: () {
                                 // Clear the controller and trigger a search (if needed)
                                 controller.clear();
-                               // final cubit = context.read<HomeCubit>();
+                                // final cubit = context.read<HomeCubit>();
                                 bloc.query = '';
                                 bloc.maybePerformSearch();
                               },
@@ -74,22 +74,64 @@ class _SearchPageState extends State<SearchPage> {
                         ),
                       ),
                       SizedBox(height: 8.h),
-                      Expanded(
-                        child: BlocBuilder<HomeCubit, HomeStates>(
-                            builder: (context, state) {
+                      BlocConsumer<HomeCubit, HomeStates>(
+                        listener: (context, state) {
+                          if (state is GetArticalsErrorState ||
+                              state is GetSearchErrorState) {
+                            Navigator.pop(context);
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (context) {
+                                return Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    AlertDialog(
+                                      title: Text(
+                                        'Error',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge,
+                                      ),
+                                      content: Center(
+                                        child: Text(
+                                          //state.error,
+                                          'failed'.tr(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge,
+                                        ),
+                                      ),
+                                      actions: [
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text(
+                                            'Close',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
+                        },
+                        builder: (context, state) {
                           if (state is GetSearchLoadingState ||
                               state is GetArticalsLoadingState) {
                             return Center(
                               child: CircularProgressIndicator(),
                             );
-                          } else if (state is GetSearchErrorState ||
-                              state is GetArticalsErrorState) {
-                            return Center(
-                              child: Text("failed".tr()),
-                            );
-                          } else if (state is GetSearchSuccessState &&
-                              articles.isNotEmpty) {
-                            return ListView.separated(
+                          }
+                          return Expanded(
+                            child: ListView.separated(
                               separatorBuilder: (context, index) =>
                                   SizedBox(height: 8.h),
                               itemCount: articles.length,
@@ -113,23 +155,18 @@ class _SearchPageState extends State<SearchPage> {
                                       date: data.publishedAt),
                                 );
                               },
-                            );
-                          } else{
-                           return Center(
-                              child: Text(
-                                'no_news'.tr(),
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                            );
-                          }
-                        }),
-                      )
+                            ),
+                          );
+                        },
+                      ),
                     ],
                   );
-                }),
+                },
+              ),
+            ),
           ),
         ),
-      )),
+      ),
     );
   }
 

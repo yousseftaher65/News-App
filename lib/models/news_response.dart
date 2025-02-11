@@ -2,13 +2,17 @@ import 'package:news_pojo/models/sources_response.dart';
 
 class NewsResponse {
   String? status;
+  String? code;
+  String? message;
   int? totalResults;
   List<Articles>? articles;
 
-  NewsResponse({this.status, this.totalResults, this.articles});
+  NewsResponse({this.message,this.code,this.status, this.totalResults, this.articles});
 
   NewsResponse.fromJson(Map<String, dynamic> json) {
     status = json['status'];
+    code = json['code'];
+    message = json['message'];
     totalResults = json['totalResults'];
     if (json['articles'] != null) {
       articles = <Articles>[];
@@ -17,7 +21,6 @@ class NewsResponse {
       });
     }
   }
-
 }
 
 class Articles {
@@ -31,7 +34,7 @@ class Articles {
   String? content;
 
   Articles(
-      { this.source,
+      {this.source,
       this.author,
       this.title,
       this.description,
@@ -41,8 +44,7 @@ class Articles {
       this.content});
 
   Articles.fromJson(Map<String, dynamic> json) {
-    source =
-        json['source'] != null ? Sources.fromJson(json['source']) : null;
+    source = json['source'] != null ? Sources.fromJson(json['source']) : null;
     author = json['author'];
     title = json['title'];
     description = json['description'];
