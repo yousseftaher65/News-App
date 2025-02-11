@@ -1,64 +1,106 @@
 import 'package:flutter/material.dart';
-import 'package:news_pojo/core/constants/api_manager.dart';
-import 'package:news_pojo/models/sources_response.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:news_pojo/bloc/cubit.dart';
+import 'package:news_pojo/bloc/states.dart';
+import 'package:news_pojo/repository/home_repo.dart';
 import 'package:news_pojo/ui/widgets/articals_fragment.dart';
 
-class NewsCategoryBody extends StatefulWidget {
+class NewsCategoryBody extends StatelessWidget {
   final String categoryName;
+  final Function onTap;
+  final ScrollController scrollController = ScrollController();
 
-  const NewsCategoryBody({super.key, required this.categoryName});
-
-  @override
-  State<NewsCategoryBody> createState() => _NewsCategoryBodyState();
-}
-
-class _NewsCategoryBodyState extends State<NewsCategoryBody> {
-  int selectedTabIndex = 0;
+  NewsCategoryBody(
+      {super.key, required this.categoryName, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
+    //var data = snapshot.data!.sources;
     return Scaffold(
-      body: FutureBuilder<SourcesResponse>(
-          future: ApiManager.getSources(widget.categoryName),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(),
+      body: BlocProvider(
+        create: (context) => HomeCubit(HomeRepo())..getSources(categoryName),
+        child: BlocConsumer<HomeCubit, HomeStates>(
+          listener: (context, state) {
+            if (state is GetSourcesLoadingState) {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    backgroundColor: Colors.transparent,
+                    content: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                },
               );
-            } else if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text('Failed to load sources', style: TextStyle(color: Colors.red),),
-                );
-              } else if (snapshot.hasData && snapshot.data != null) {
-                var data = snapshot.data!.sources;
-                return DefaultTabController(
-                  length: data?.length ?? 0,
-                  initialIndex: selectedTabIndex,
-                  child: Column(
+            } else if (state
+                    is GetSourcesErrorState /* ||
+                state is GetArticalsErrorState */
+                ) {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TabBar(
-                        dividerColor: Colors.transparent,
-                        indicatorColor: Theme.of(context).secondaryHeaderColor,
-                        labelColor: Theme.of(context).secondaryHeaderColor,
-                        isScrollable: true,
-                        onTap: (index) {
-                          setState(() {
-                            selectedTabIndex = index;
-                          });
-                        },
-                        tabs: data!.map((e) => Tab(text: e.name!)).toList(),
+                      AlertDialog(
+                        title: Text('Error'),
+                        content: Center(
+                          child: Text(
+                            //'failed'.tr(),
+                            state.error,
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                        ),
+                        actions: [
+                          ElevatedButton(
+                            onPressed: () {
+                              onTap();
+                            },
+                            child: Text(
+                              'Go To Home',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ),
+                        ],
                       ),
-                      ArticalsFragment(sourceId: data[selectedTabIndex].id!),
                     ],
-                  ),
-                );
-              }
+                  );
+                },
+              );
             }
-            return Center(
-              child: Text('No data found', style: TextStyle(color: Colors.red),),
+          },
+          builder: (context, state) {
+            var bloc = BlocProvider.of<HomeCubit>(context);
+            var data = bloc.sourcesResponse?.sources;
+            return DefaultTabController(
+              length: data?.length ?? 0,
+              initialIndex: bloc.selectedTabIndex,
+              child: Column(
+                children: [
+                  TabBar(
+                    dividerColor: Colors.transparent,
+                    indicatorColor: Theme.of(context).secondaryHeaderColor,
+                    labelColor: Theme.of(context).secondaryHeaderColor,
+                    isScrollable: true,
+                    onTap: (index) {
+                      bloc.changeSelectedTab(index);
+                      scrollController.animateTo(0.0,
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.easeInOut);
+                    },
+                    tabs: data?.map((e) => Tab(text: e.name)).toList() ?? [],
+                  ),
+                  ArticalsFragment(
+                    scrollController: scrollController,
+                  ),
+                ],
+              ),
             );
-          }),
+          },
+        ),
+      ),
     );
   }
 }

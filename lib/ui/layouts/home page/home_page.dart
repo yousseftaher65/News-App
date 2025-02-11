@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
             ? HomeCategoryBody(
                 onTapCategory: onTapCategory,
               )
-            : NewsCategoryBody(categoryName: categoryName!),
+            : NewsCategoryBody(categoryName: categoryName!,onTap: onBack,),
       ),
     );
   }
