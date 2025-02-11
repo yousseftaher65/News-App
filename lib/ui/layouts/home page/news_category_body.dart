@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_pojo/bloc/cubit.dart';
 import 'package:news_pojo/bloc/states.dart';
+import 'package:news_pojo/repository/home_repo.dart';
 import 'package:news_pojo/ui/widgets/articals_fragment.dart';
 
 class NewsCategoryBody extends StatelessWidget {
   final String categoryName;
   final Function onTap;
+  final ScrollController scrollController = ScrollController();
 
-  const NewsCategoryBody(
+  NewsCategoryBody(
       {super.key, required this.categoryName, required this.onTap});
 
   @override
@@ -16,7 +18,7 @@ class NewsCategoryBody extends StatelessWidget {
     //var data = snapshot.data!.sources;
     return Scaffold(
       body: BlocProvider(
-        create: (context) => HomeCubit()..getSources(categoryName),
+        create: (context) => HomeCubit(HomeRepo())..getSources(categoryName),
         child: BlocConsumer<HomeCubit, HomeStates>(
           listener: (context, state) {
             if (state is GetSourcesLoadingState) {
@@ -84,10 +86,15 @@ class NewsCategoryBody extends StatelessWidget {
                     isScrollable: true,
                     onTap: (index) {
                       bloc.changeSelectedTab(index);
+                      scrollController.animateTo(0.0,
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.easeInOut);
                     },
                     tabs: data?.map((e) => Tab(text: e.name)).toList() ?? [],
                   ),
-                  ArticalsFragment(),
+                  ArticalsFragment(
+                    scrollController: scrollController,
+                  ),
                 ],
               ),
             );

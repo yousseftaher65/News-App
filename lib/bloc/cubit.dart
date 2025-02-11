@@ -1,13 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_pojo/bloc/states.dart';
-import 'package:http/http.dart' as http;
-import 'package:news_pojo/core/constants/api_manager.dart';
-import 'package:news_pojo/core/constants/config.dart';
 import 'package:news_pojo/models/news_response.dart';
 import 'package:news_pojo/models/sources_response.dart';
+import 'package:news_pojo/repository/home_repo_interface.dart';
 
 class HomeCubit extends Cubit<HomeStates> {
   SourcesResponse? sourcesResponse;
@@ -15,8 +11,9 @@ class HomeCubit extends Cubit<HomeStates> {
   int selectedTabIndex = 0;
   String? query;
   String lastQuery = '';
+  HomeRepoInterface homeRepoInterface;
 
-  HomeCubit() : super(HomeInitState());
+  HomeCubit(this.homeRepoInterface) : super(HomeInitState());
   static HomeCubit get(BuildContext context) => BlocProvider.of(context);
 
   void changeSelectedTab(int index) async {
@@ -47,12 +44,7 @@ class HomeCubit extends Cubit<HomeStates> {
   void getSources(String categoryName) async {
     try {
       emit(GetSourcesLoadingState());
-      Uri url = Uri.https(ApiManager.baseUrl, ApiManager.topHeadlines,
-          {'category': categoryName, 'apiKey': apiKey});
-      http.Response response = await http.get(url);
-
-      var jsonData = jsonDecode(response.body);
-      sourcesResponse = SourcesResponse.fromJson(jsonData);
+     sourcesResponse = await homeRepoInterface.getSources(categoryName);
       if (sourcesResponse?.status == 'ok') {
         await getArticles();
         emit(GetSourcesSuccessState());
@@ -67,14 +59,8 @@ class HomeCubit extends Cubit<HomeStates> {
   Future<void> getArticles() async {
     try {
       emit(GetArticalsLoadingState());
-      Uri url = Uri.https(ApiManager.baseUrl, ApiManager.everything, {
-        'apiKey': apiKey,
-        "sources": sourcesResponse?.sources?[selectedTabIndex].id ?? 'abc-news'
-      });
-      http.Response response = await http.get(url);
-
-      var jsonData = jsonDecode(response.body);
-      newsResponse = NewsResponse.fromJson(jsonData);
+     newsResponse = await homeRepoInterface.getArticles(
+          sourcesResponse?.sources?[selectedTabIndex].id ?? 'abc-news');
       if (newsResponse?.status == 'ok') {
         emit(GetArticalsSuccessState());
       } else {
@@ -88,17 +74,12 @@ class HomeCubit extends Cubit<HomeStates> {
   Future<void> getSearch() async {
     try {
       emit(GetSearchLoadingState());
-      Uri url = Uri.https(ApiManager.baseUrl, ApiManager.everything,
-          {'q': query ?? 'abc-news', 'apiKey': apiKey});
-      http.Response response = await http.get(url);
-
-      var jsonData = jsonDecode(response.body);
-      newsResponse = NewsResponse.fromJson(jsonData);
-     if(newsResponse?.status == 'ok'){
-       emit(GetSearchSuccessState());
-       }else{
-        emit(GetSearchErrorState(newsResponse?.message??''));
-       }
+    newsResponse = await homeRepoInterface.getSearch(query ?? 'abc-news');
+      if (newsResponse?.status == 'ok') {
+        emit(GetSearchSuccessState());
+      } else {
+        emit(GetSearchErrorState(newsResponse?.message ?? ''));
+      }
     } catch (e) {
       emit(GetSearchErrorState(e.toString()));
     }

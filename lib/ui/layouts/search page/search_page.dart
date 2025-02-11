@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:news_pojo/bloc/cubit.dart';
 import 'package:news_pojo/bloc/states.dart';
+import 'package:news_pojo/repository/home_repo.dart';
 import 'package:news_pojo/ui/widgets/artical_item.dart';
 import 'package:news_pojo/ui/widgets/description_sheet.dart';
 
@@ -26,7 +27,7 @@ class _SearchPageState extends State<SearchPage> {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: BlocProvider(
-              create: (context) => HomeCubit()..performSearch(controller.text),
+              create: (context) => HomeCubit(HomeRepo())..performSearch(controller.text),
               child: BlocConsumer<HomeCubit, HomeStates>(
                 listener: (context, state) {},
                 builder: (context, state) {

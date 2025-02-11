@@ -37,7 +37,7 @@ class DescriptionSheet extends StatelessWidget {
                     height: 220,
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    placeholder: (context, url) => CircularProgressIndicator(),
+                    placeholder: (context, url) => Center(child: CircularProgressIndicator()),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
                 ),

@@ -7,8 +7,10 @@ import 'package:news_pojo/ui/widgets/artical_item.dart';
 import 'package:news_pojo/ui/widgets/description_sheet.dart';
 
 class ArticalsFragment extends StatelessWidget {
+  final ScrollController scrollController;
   const ArticalsFragment({
     super.key,
+    required this.scrollController
   });
 
   @override
@@ -23,13 +25,12 @@ class ArticalsFragment extends StatelessWidget {
             barrierDismissible: false,
             builder: (context) {
               return AlertDialog(
-                backgroundColor: Colors.transparent,
-                content: Center(child: CircularProgressIndicator())
-              );
+                  backgroundColor: Colors.transparent,
+                  content: Center(child: CircularProgressIndicator()));
             },
           );
         } else if (state is GetArticalsErrorState) {
-            Navigator.pop(context);
+          Navigator.pop(context);
           showDialog(
             context: context,
             barrierDismissible: false,
@@ -66,8 +67,8 @@ class ArticalsFragment extends StatelessWidget {
               );
             },
           );
-        }else if(state is GetArticalsSuccessState){
-            Navigator.pop(context);
+        } else if (state is GetArticalsSuccessState) {
+          Navigator.pop(context);
         }
       },
       builder: (context, state) {
@@ -75,7 +76,8 @@ class ArticalsFragment extends StatelessWidget {
         var snapshot = cubit.newsResponse?.articles ?? [];
         return Expanded(
           child: ListView.separated(
-              padding: EdgeInsets.only(left: 16.w , right: 16.w,top: 16.h),
+              controller: scrollController,
+              padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 16.h),
               itemCount: snapshot.length,
               separatorBuilder: (context, index) => SizedBox(height: 8.h),
               itemBuilder: (context, index) {
