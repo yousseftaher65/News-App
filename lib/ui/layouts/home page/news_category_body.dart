@@ -5,20 +5,32 @@ import 'package:news_pojo/bloc/states.dart';
 import 'package:news_pojo/repository/home_repo.dart';
 import 'package:news_pojo/ui/widgets/articals_fragment.dart';
 
-class NewsCategoryBody extends StatelessWidget {
+class NewsCategoryBody extends StatefulWidget {
   final String categoryName;
   final Function onTap;
+
+ const NewsCategoryBody(
+      {super.key, required this.categoryName, required this.onTap});
+
+  @override
+  State<NewsCategoryBody> createState() => _NewsCategoryBodyState();
+}
+
+class _NewsCategoryBodyState extends State<NewsCategoryBody> {
   final ScrollController scrollController = ScrollController();
 
-  NewsCategoryBody(
-      {super.key, required this.categoryName, required this.onTap});
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     //var data = snapshot.data!.sources;
     return Scaffold(
       body: BlocProvider(
-        create: (context) => HomeCubit(HomeRepo())..getSources(categoryName),
+        create: (context) => HomeCubit(HomeRepo())..getSources(widget.categoryName),
         child: BlocConsumer<HomeCubit, HomeStates>(
           listener: (context, state) {
             if (state is GetSourcesLoadingState) {
@@ -56,7 +68,7 @@ class NewsCategoryBody extends StatelessWidget {
                         actions: [
                           ElevatedButton(
                             onPressed: () {
-                              onTap();
+                              widget.onTap();
                             },
                             child: Text(
                               'Go To Home',
