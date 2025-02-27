@@ -86,9 +86,9 @@ class DrawerWidget extends StatelessWidget {
                 size: 50,
               ),
               enableSearch: false,
-              onSelected: (ThemeMode? value) {
+              onSelected: (value) {
                 if (value != null) {
-                  provider.changeTheme();
+                  provider.changeTheme(value);
                   Navigator.pop(context);
                 }
               },
@@ -155,7 +155,7 @@ class DrawerWidget extends StatelessWidget {
                     Locale('en'),
                   );
                 }
-              Navigator.pop(context);
+                Navigator.pop(context);
               },
               dropdownMenuEntries: [
                 DropdownMenuEntry(
