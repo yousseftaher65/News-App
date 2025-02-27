@@ -9,7 +9,7 @@ A feature-rich news discovery application built with Flutter. Stay updated with 
 
 Watch the demo video below to see the app in action:
 
-[![Watch the video](https://img.youtube.com/vi/OYZY_IlonGI/maxresdefault.jpg)](https://www.youtube.com/shorts/-wgFGf3xSL4)
+[![Watch the video](https://img.youtube.com/vi/-wgFGf3xSL4/maxresdefault.jpg)](https://www.youtube.com/shorts/-wgFGf3xSL4)
 
 ## Features ✨
 
