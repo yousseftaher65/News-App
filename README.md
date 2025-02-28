@@ -21,6 +21,8 @@ Watch the demo video below to see the app in action:
   - Multi-language support (English, Arabic)
 - **Responsive UI** 📱
   - Clean and intuitive design suitable for different device sizes
+- **Dark Mode** 🌗
+  - Beautiful dark and light themes
 
 ## Technologies 🛠️
 
