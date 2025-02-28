@@ -36,3 +36,4 @@ Watch the demo video below to see the app in action:
   - google_fonts
   - http
   - flutter_screenutil
+  - provider
