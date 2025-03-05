@@ -27,7 +27,7 @@ Watch the demo video below to see the app in action:
 ## Technologies 🛠️
 
 - **State Management**: BLoC (Cubit)
-- **News API**: [The Movie Database (TMDB)](https://www.newsapi.org/)
+- **News API**: [News API](https://www.newsapi.org/)
 - **Localization**: Easy Localization (JSON-based)
 - **Additional Packages**:
   - Cached Network Image (Image caching)
